@@ -1,0 +1,118 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Big+Shoulders+Display:wght@800;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css"><title>Administración | SAE After Class</title><meta name="robots" content="noindex"></head><body>
+<nav class="nav"><a class="brand" href="/">SAE After Class</a><span>Administración</span></nav>
+<main class="page wide">
+  <section class="panel" id="login">
+    <h2>Contraseña de administración</h2>
+    <input type="password" id="pw" autocomplete="current-password">
+    <div class="row"><button class="btn" id="go">Ingresar</button></div>
+    <div id="m0"></div>
+  </section>
+
+  <div id="app" class="hidden">
+    <h1 style="font-size:4rem">Panel del torneo</h1>
+    <div id="msg"></div>
+    <h2 style="font-size:2.2rem;margin-top:24px">Inscritos: <span id="count">0</span> de 32</h2>
+    <div class="chips" id="pool"></div>
+
+    <div class="row" style="align-items:center">
+      <button class="btn" id="draw">Realizar el sorteo</button>
+      <label style="margin:0;display:flex;gap:8px;align-items:center"><input type="checkbox" id="byes"> Permitir pases directos (sorteo con 17 a 31 jugadores)</label>
+    </div>
+    <p style="margin:12px 0 28px">El sorteo se guarda al confirmar y se muestra en pantalla. Proyectá esta página durante el evento. Después, hacé clic en el nombre de quien gane cada partido (volvé a hacer clic para deshacer).</p>
+
+    <div class="scroll admin-on"><div class="bracket" id="bracket"></div></div>
+
+    <h2 style="font-size:2.2rem;margin-top:40px">Códigos</h2>
+    <p id="codeNote" style="margin:0 0 12px"></p>
+    <div class="chips" id="codes"></div>
+    <div class="row" id="codeTools">
+      <button class="btn ghost small" id="copyCodes">Copiar códigos disponibles</button>
+      <button class="btn ghost small" id="dlCodes">Descargar todos los códigos</button>
+    </div>
+
+    <div class="row" style="margin-top:40px">
+      <button class="btn ghost small" id="resetDraw">Rehacer el sorteo</button>
+      <button class="btn danger small" id="resetAll">Reiniciar todo (códigos nuevos)</button>
+    </div>
+    <p style="margin:12px 0 0;max-width:40em">Reiniciar todo borra el sorteo, todos los jugadores y códigos usados, y genera 32 nuevos. Los anteriores dejan de funcionar.</p>
+  </div>
+</main>
+<div class="stage hidden" id="stage"><button class="btn ghost small skip" id="skip">Saltar</button><div><div class="match-no" id="mno"></div><div class="vs"><span id="pa"></span><i>vs</i><span id="pb"></span></div></div></div>
+<script src="/shared.js"></script>
+<script>
+let pw=sessionStorage.getItem('pw')||'', state=null, skipping=false, busy=false;
+const msg=(t,cls)=>$('#msg').innerHTML=t?'<div class="msg '+cls+'">'+esc(t)+'</div>':'';
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+function paint(){
+  $('#count').textContent=state.players.length;
+  $('#pool').innerHTML=state.players.map(p=>'<span class="chip">'+esc(p)+(state.bracket?'':'<button title="Liberar a este jugador" data-p="'+esc(p)+'">×</button>')+'</span>').join('')||'<span>Todavía no hay jugadores.</span>';
+  $('#pool').querySelectorAll('button').forEach(b=>b.onclick=()=>{ if(confirm('¿Liberar a '+b.dataset.p+'? Su nombre y código volverán a estar disponibles.')) act({action:'release',name:b.dataset.p}); });
+  renderBracket($('#bracket'),state.bracket,(r,m,n)=>act({action:'winner',round:r,match:m,name:n}));
+  $('#draw').disabled=!!state.bracket;
+  paintCodes();
+}
+
+function paintCodes(){
+  const c=state.codes;
+  $('#codeTools').classList.toggle('hidden',!c);
+  if(!c){ $('#codes').innerHTML=''; $('#codeNote').textContent='Están configurados los códigos iniciales. Reiniciá todo para generar códigos nuevos y copiarlos aquí.'; return; }
+  const free=c.filter(x=>!x.used).length;
+  $('#codeNote').textContent=free+' de '+c.length+' códigos disponibles. Los ya usados aparecen tachados.';
+  $('#codes').innerHTML=c.map(x=>'<span class="chip" style="'+(x.used?'text-decoration:line-through;opacity:.5':'')+'">'+esc(x.code)+'</span>').join('');
+}
+const codeList=only=>state.codes.filter(x=>!only||!x.used).map(x=>x.code).join('\n');
+$('#copyCodes').onclick=async()=>{ try{ await navigator.clipboard.writeText(codeList(true)); msg('Copiados '+state.codes.filter(x=>!x.used).length+' códigos disponibles.','ok'); }catch(e){ msg('No se pudieron copiar. Usá Descargar.','err'); } };
+$('#dlCodes').onclick=()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([codeList(false)+'\n'],{type:'text/plain'})); a.download='codes.txt'; a.click(); };
+
+async function act(body){
+  if(busy) return; busy=true; msg('');
+  try{ state=await api('/api/admin',{password:pw,...body}); paint(); return state; }
+  catch(e){ msg(e.message,'err'); }
+  finally{ busy=false; }
+}
+
+async function login(){
+  pw=$('#pw').value||pw;
+  try{
+    state=await api('/api/admin',{password:pw,action:'list'});
+    sessionStorage.setItem('pw',pw);
+    $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); paint();
+  }catch(e){ $('#m0').innerHTML='<div class="msg err">'+esc(e.message)+'</div>'; }
+}
+$('#go').onclick=login;
+$('#pw').addEventListener('keydown',e=>{ if(e.key==='Enter') login(); });
+if(pw) login();
+
+$('#draw').onclick=async()=>{
+  const old=state.bracket;
+  const s=await act({action:'draw',allowByes:$('#byes').checked});
+  if(s&&s.bracket&&!old) await reveal(s.bracket.rounds[0],s.players);
+};
+
+async function reveal(matches,pool){
+  const st=$('#stage'); st.classList.remove('hidden'); skipping=false;
+  $('#skip').onclick=()=>{skipping=true};
+  const spin=async(el,final)=>{
+    const t=Date.now();
+    while(!skipping&&Date.now()-t<1100){ el.textContent=pool[Math.floor(Math.random()*pool.length)]; await sleep(70); }
+    el.textContent=final;
+  };
+  for(let i=0;i<matches.length&&!skipping;i++){
+    const m=matches[i];
+    $('#mno').textContent='Partido '+(i+1)+' de 16';
+    $('#pa').textContent=''; $('#pb').textContent='';
+    await spin($('#pa'),m.a);
+    if(m.b) await spin($('#pb'),m.b); else $('#pb').textContent='Pase directo';
+    if(!skipping) await sleep(1200);
+  }
+  st.classList.add('hidden');
+}
+
+$('#resetDraw').onclick=()=>{ if(confirm('¿Borrar el sorteo actual y las llaves? Los jugadores seguirán inscritos.')) act({action:'reset-draw'}); };
+$('#resetAll').onclick=async()=>{
+  const t=prompt('Esto borra el sorteo, todos los jugadores y códigos, y genera 32 nuevos. Escribí REINICIAR para confirmar.');
+  if(t&&t.trim().toUpperCase()==='REINICIAR'){ await act({action:'reset-all'}); msg('Listo. Los nuevos códigos aparecen abajo.','ok'); }
+};
+</script>
+</body></html>
