@@ -1,7 +1,11 @@
 const crypto = require('crypto');
 
-const DB_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-const DB_TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
+const DB_URL = process.env.KV_REST_API_URL
+  || process.env.UPSTASH_REDIS_REST_URL
+  || process.env.UPSTASH_REDIS_REST_KV_REST_API_URL;
+const DB_TOKEN = process.env.KV_REST_API_TOKEN
+  || process.env.UPSTASH_REDIS_REST_TOKEN
+  || process.env.UPSTASH_REDIS_REST_KV_REST_API_TOKEN;
 
 // Run one Redis command through the Upstash REST API, e.g. redis('HGET', 'key', 'field')
 async function redis(...cmd) {
