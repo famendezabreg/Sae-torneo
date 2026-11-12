@@ -37,7 +37,7 @@ function renderBracket(el, bracket, onPick) {
     <div class="round">
       <h3>${ROUND_NAMES[r]}</h3>
       <div class="cells">${round.map((m, i) => `
-        <div class="cell ${r < 4 ? (i % 2 === 0 ? 'top' : 'bot') : 'last'}">
+        <div class="cell ${r < 4 ? (i % 2 === 0 ? 'top' : 'bot') : 'last'}" style="--row-span:${32 / round.length}">
           <div class="match ${r > 0 ? 'linked' : ''}">${slotHTML(m, 'a', r, i)}${slotHTML(m, 'b', r, i)}</div>
         </div>`).join('')}
       </div>

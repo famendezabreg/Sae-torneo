@@ -6,6 +6,8 @@ Sitio del evento y herramientas para administrar el torneo de FIFA: formulario d
 
 La portada es estática y se puede abrir con cualquier servidor estático. Las rutas `/bracket`, `/admin` y la inscripción con código heredada en `/join`, además de las funciones de `/api`, requieren el despliegue en Vercel.
 
+Las pruebas del panel usan un Redis en memoria y no modifican los datos del torneo: `node --test tests/admin.test.js`.
+
 ## Preparar el registro y el cuadro del torneo
 
 1. Importá este proyecto a Vercel.

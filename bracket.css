@@ -2,3 +2,18 @@
 @media(max-width:700px){.bracket-page .site-header{height:auto;min-height:68px;align-items:flex-start;gap:15px;padding:15px 5%;flex-direction:column}.bracket-page .nav{width:100%;gap:15px;overflow-x:auto;white-space:nowrap;padding-bottom:4px;font-size:10px}.bracket-page .nav .nav-cta{padding:9px 11px}.bracket-hero{min-height:310px;padding:45px 6% 65px}.bracket-hero:after{right:-50px;top:80px;font-size:205px}.bracket-hero h1{font-size:54px}.bracket-hero>p{max-width:94%;font-size:12px}.bracket-champion{position:relative;right:auto;bottom:auto;margin-top:17px;width:max-content;min-width:200px}.bracket-content{padding:43px 6% 58px}.bracket-content-head{align-items:flex-start;gap:20px}.bracket-content-head h2{font-size:26px}.bracket-home-link{font-size:9px;white-space:nowrap;margin-top:20px}.bracket .round{width:175px}.bracket-footer{padding:21px 6%;font-size:9px}}
 .player-pool .chips,.bracket-page .chip,.pool-empty{display:none}
 .player-pool p{font-size:11px;color:#77796f;margin:9px 0 0}
+
+/* Pyramidal, connected bracket shared with the admin layout. */
+.bracket-page .bracket{gap:28px;padding:8px 2px 18px}
+.bracket-page .bracket .round{width:196px;padding:0;background:transparent;border:0}
+.bracket-page .bracket .round h3{height:35px;padding:2px 0 10px;margin:0 0 12px}
+.bracket-page .bracket .cells{display:grid;grid-template-rows:repeat(32,34px);position:relative}
+.bracket-page .bracket .cell{display:flex;align-items:center;grid-row:span var(--row-span);min-width:0}
+.bracket-page .bracket .cell:before,.bracket-page .bracket .cell:after{display:block;content:'';position:absolute;z-index:0;border-color:#b8bbad}
+.bracket-page .bracket .cell:after{right:-14px;top:50%;width:14px;border-top:1px solid #b8bbad}
+.bracket-page .bracket .cell.last:after{display:none}
+.bracket-page .bracket .cell.top:before,.bracket-page .bracket .cell.bot:before{right:-14px;width:0;height:50%;border-right:1px solid #b8bbad}
+.bracket-page .bracket .cell.top:before{top:50%}
+.bracket-page .bracket .cell.bot:before{bottom:50%}
+.bracket-page .bracket .match{z-index:1;box-shadow:0 3px 10px #12130f08}
+.bracket-page .bracket .match.linked:before{display:block;content:'';position:absolute;left:-15px;top:50%;width:14px;border-top:1px solid #b8bbad}
