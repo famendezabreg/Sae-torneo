@@ -20,7 +20,7 @@ El flujo principal es la carga manual desde `/admin`. La ruta `/join` se conserv
 
 La portada incluye un formulario que genera un mensaje para coordinar la inscripción y el pago. El equipo organizador confirma el pago y agrega el nombre del jugador al panel. El sorteo requiere los 32 cupos completos. No se recopilan carnet, carrera ni teléfonos en la base de datos del torneo.
 
-Cuando tengas el número de WhatsApp de inscripciones, colocalo en `site-config.js` en formato internacional y solo con dígitos. El formulario abrirá WhatsApp con el mensaje preparado; cada jugador todavía debe confirmar el envío desde WhatsApp.
+Los números de WhatsApp por actividad están en `site-config.js`. Al enviar el formulario, el botón principal abre el chat correspondiente con el mensaje preparado; cada jugador todavía debe confirmar el envío desde WhatsApp.
 
 ## Personalización
 

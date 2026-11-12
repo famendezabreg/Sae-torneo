@@ -23,8 +23,20 @@ nav.querySelectorAll('a').forEach((link) => link.addEventListener('click', () =>
 
 const form = document.querySelector('#signup-form');
 const status = document.querySelector('#form-status');
+const activitySelect = document.querySelector('#activity');
+const sendButton = document.querySelector('#send-inscription');
 
-form.addEventListener('submit', async (event) => {
+function updateSendButton() {
+  const activity = activitySelect.value;
+  sendButton.disabled = !activity;
+  if (activity.includes('FIFA') && activity.includes('Rey de la pista')) sendButton.firstChild.textContent = 'Abrir WhatsApp de ambos contactos ';
+  else if (activity.includes('FIFA')) sendButton.firstChild.textContent = 'Ir a WhatsApp de FIFA ';
+  else if (activity.includes('Mario Kart')) sendButton.firstChild.textContent = 'Ir a WhatsApp de Mario Kart ';
+  else sendButton.firstChild.textContent = 'Elegí tu actividad ';
+}
+activitySelect.addEventListener('change', updateSendButton);
+
+form.addEventListener('submit', (event) => {
   event.preventDefault();
   const data = new FormData(form);
   const message = [
@@ -37,54 +49,24 @@ form.addEventListener('submit', async (event) => {
     `Teléfono/WhatsApp: ${data.get('phone').trim()}`,
   ].join('\n');
 
-  let output = form.querySelector('.generated-message');
-  if (!output) {
-    output = document.createElement('div');
-    output.className = 'generated-message';
-    output.setAttribute('role', 'status');
-    form.append(output);
-  }
-  output.textContent = message;
-
-  form.querySelectorAll('.copy-button,.whatsapp-button').forEach((button) => button.remove());
   const contacts = window.SAE_EVENT_CONFIG?.inscriptionsWhatsApp || {};
   const activity = String(data.get('activity'));
   const recipients = [];
   if (activity.includes('FIFA')) recipients.push(['Contacto de FIFA', contacts.fifa]);
-  if (activity.includes('Mario Kart')) recipients.push(['Contacto de Mario Kart', contacts.marioKart]);
+  if (activity.includes('Rey de la pista')) recipients.push(['Contacto de Mario Kart', contacts.marioKart]);
   const validRecipients = recipients.filter(([, number]) => String(number || '').replace(/\D/g, ''));
   if (validRecipients.length) {
-    validRecipients.forEach(([label, number]) => {
-      const whatsappLink = document.createElement('a');
+    const urls = validRecipients.map(([, number]) => {
       const recipient = String(number).replace(/\D/g, '');
-      whatsappLink.className = 'button button-lime whatsapp-button';
-      whatsappLink.href = `https://wa.me/${recipient}?text=${encodeURIComponent(message)}`;
-      whatsappLink.target = '_blank';
-      whatsappLink.rel = 'noopener';
-      whatsappLink.textContent = `${label}: abrir WhatsApp ↗`;
-      form.append(whatsappLink);
+      return `https://wa.me/${recipient}?text=${encodeURIComponent(message)}`;
     });
-    status.textContent = 'Abrí el chat del contacto correspondiente, revisá el mensaje y tocá Enviar.';
+    status.textContent = 'Abriendo WhatsApp. Revisá el mensaje y tocá Enviar para completar la inscripción.';
+    if (urls.length === 1) window.location.assign(urls[0]);
+    else urls.forEach((url) => window.open(url, '_blank', 'noopener'));
   } else {
-    const copy = document.createElement('button');
-    copy.type = 'button';
-    copy.className = 'copy-button';
-    copy.textContent = 'Copiar mensaje';
-    form.append(copy);
-    copy.onclick = async () => {
-      try {
-        await navigator.clipboard.writeText(message);
-        copy.textContent = '¡Mensaje copiado!';
-      } catch {
-        const range = document.createRange();
-        range.selectNodeContents(output);
-        const selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
-        copy.textContent = 'Seleccionado: copiá el texto';
-      }
-    };
-    status.textContent = 'El WhatsApp de inscripciones aún está pendiente. Por ahora, copiá el mensaje para enviarlo.';
+    status.textContent = 'No está configurado el contacto de WhatsApp para esa actividad.';
   }
   status.classList.remove('error');
 });
+
+updateSendButton();
