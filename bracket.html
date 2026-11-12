@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#11120f">
-  <title>Llaves — SAE After Class</title>
+  <title>Cuadro del torneo — SAE After Class</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -22,11 +22,11 @@
     <section class="bracket-hero">
       <div class="bracket-kicker"><span></span> SAE AFTER CLASS · TORNEO FIFA</div>
       <h1>EL CAMINO<br><em>AL TÍTULO</em></h1>
-      <p id="status" aria-live="polite">Cargando las llaves…</p>
+      <p id="status" aria-live="polite">Cargando el cuadro…</p>
       <div id="champ"></div>
     </section>
     <section class="bracket-content">
-      <div class="bracket-content-head"><div><span class="kicker">LLAVES DEL TORNEO</span><h2>Rondas y resultados</h2></div><a class="bracket-home-link" href="/">Volver al evento <span>↗</span></a></div>
+      <div class="bracket-content-head"><div><span class="kicker">CUADRO DE ENFRENTAMIENTOS</span><h2>Rondas y resultados</h2></div><a class="bracket-home-link" href="/">Volver al evento <span>↗</span></a></div>
       <div class="bracket-scroll"><div class="bracket" id="bracket"></div></div>
       <div id="poolWrap" class="player-pool hidden"><div><span class="kicker">ANTES DEL SORTEO</span><h2>Inscritos: <span id="player-count">0</span> de 32</h2><p>El sorteo mostrará los enfrentamientos cuando los 32 cupos estén completos.</p></div></div>
       <p class="bracket-refresh"><span></span> Esta página se actualiza automáticamente cuando se registran resultados.</p>
@@ -45,12 +45,12 @@
           $('#status').textContent='El sorteo ya está hecho. Los ganadores avanzan de ronda cuando el equipo organizador registra cada resultado.';
           $('#poolWrap').classList.add('hidden');
         }else{
-          $('#status').textContent=s.playerCount+' de '+s.max+' jugadores inscritos. Las llaves aparecerán después del sorteo.';
+          $('#status').textContent=s.playerCount+' de '+s.max+' jugadores inscritos. El cuadro aparecerá después del sorteo.';
           $('#poolWrap').classList.remove('hidden');
           $('#player-count').textContent=s.playerCount;
         }
       }catch(e){
-        $('#status').textContent='Las llaves estarán disponibles cuando se active el sistema del torneo.';
+        $('#status').textContent='El cuadro estará disponible cuando se active el sistema del torneo.';
         renderBracket($('#bracket'),null);
       }
     }

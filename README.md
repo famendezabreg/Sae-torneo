@@ -1,19 +1,19 @@
 # SAE After Class
 
-Sitio del evento y herramientas para administrar el torneo de FIFA: formulario de contacto, registro manual de participantes confirmados, sorteo de llaves y avance de resultados.
+Sitio del evento y herramientas para administrar el torneo de FIFA: formulario de contacto, registro manual de participantes confirmados, cuadro de enfrentamientos y avance de resultados.
 
 ## Desarrollo local
 
 La portada es estática y se puede abrir con cualquier servidor estático. Las rutas `/bracket`, `/admin` y la inscripción con código heredada en `/join`, además de las funciones de `/api`, requieren el despliegue en Vercel.
 
-## Preparar el registro y las llaves
+## Preparar el registro y el cuadro del torneo
 
 1. Importá este proyecto a Vercel.
 2. Conectá una base Upstash Redis desde **Storage** del proyecto. Esto configura las variables de acceso que usan las funciones de API.
 3. En **Settings → Environment Variables**, agregá `ADMIN_PASSWORD` con una contraseña privada.
 4. Volvé a desplegar el proyecto.
 5. Abrí `/admin` e ingresá la contraseña. Agregá manualmente a cada participante después de verificar su pago; el panel no guarda datos de pago.
-6. Al llegar a 32 participantes confirmados, elegí **Realizar el sorteo**. La app mezcla los nombres y genera los 16 enfrentamientos. `/bracket` muestra las llaves públicamente.
+6. Al llegar a 32 participantes confirmados, elegí **Realizar el sorteo**. La app mezcla los nombres y genera los 16 enfrentamientos. `/bracket` muestra el cuadro públicamente.
 7. Después de cada partido, seleccioná el ganador en el panel. El ganador avanza a la siguiente ronda. Si elegiste a la persona incorrecta, volvé a seleccionarla para deshacerlo.
 
 El flujo principal es la carga manual desde `/admin`. La ruta `/join` se conserva para códigos de inscripción que ya se hubieran compartido; también respeta el límite de 32 cupos.

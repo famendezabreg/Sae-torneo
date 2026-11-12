@@ -17,7 +17,7 @@
     </section>
     <h2 style="font-size:2.2rem;margin-top:24px">Inscritos: <span id="count">0</span> de 32</h2>
     <form class="participant-form" id="player-form">
-      <div><label for="player-name">Agregar participante confirmado</label><input type="text" id="player-name" maxlength="80" placeholder="Nombre que aparecerá en las llaves" required><small>Agregalo solo después de confirmar el pago.</small></div>
+      <div><label for="player-name">Agregar participante confirmado</label><input type="text" id="player-name" maxlength="80" placeholder="Nombre que aparecerá en el cuadro" required><small>Agregalo solo después de confirmar el pago.</small></div>
       <label class="paid-confirmation"><input type="checkbox" id="paid-confirmed" required> Confirmo que esta persona ya pagó</label>
       <button class="btn" id="add-player" type="submit">Agregar a la lista</button>
     </form>
@@ -129,6 +129,6 @@ async function reveal(matches,pool){
   st.classList.add('hidden');
 }
 
-$('#resetDraw').onclick=()=>{ if(confirm('¿Borrar el sorteo actual y las llaves? Los jugadores seguirán inscritos.')) act({action:'reset-draw'}); };
+$('#resetDraw').onclick=()=>{ if(confirm('¿Borrar el sorteo actual y el cuadro? Los jugadores seguirán inscritos.')) act({action:'reset-draw'}); };
 </script>
 </body></html>
