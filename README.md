@@ -10,7 +10,7 @@ La portada es estática y se puede abrir con cualquier servidor estático. Las r
 
 1. Importá este proyecto a Vercel.
 2. Conectá una base Upstash Redis desde **Storage** del proyecto. La integración agrega las variables de acceso necesarias; la API acepta los nombres estándar de Upstash y los nombres con prefijo que Vercel crea para esta integración.
-3. En **Settings → Environment Variables**, agregá `ADMIN_PASSWORD` con una contraseña privada.
+3. En **Settings → Environment Variables**, agregá `ADMIN_PASSWORD` como secreto para **Production** y **Preview**.
 4. Volvé a desplegar el proyecto.
 5. Abrí `/admin` e ingresá la contraseña. Agregá manualmente a cada participante después de verificar su pago; el panel no guarda datos de pago.
 6. Al llegar a 32 participantes confirmados, elegí **Realizar el sorteo**. La app mezcla los nombres y genera los 16 enfrentamientos. `/bracket` muestra el cuadro públicamente.
