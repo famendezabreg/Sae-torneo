@@ -47,16 +47,24 @@ form.addEventListener('submit', async (event) => {
   output.textContent = message;
 
   form.querySelectorAll('.copy-button,.whatsapp-button').forEach((button) => button.remove());
-  const recipient = String(window.SAE_EVENT_CONFIG?.inscriptionsWhatsApp || '').replace(/\D/g, '');
-  if (recipient) {
-    const whatsappLink = document.createElement('a');
-    whatsappLink.className = 'button button-lime whatsapp-button';
-    whatsappLink.href = `https://wa.me/${recipient}?text=${encodeURIComponent(message)}`;
-    whatsappLink.target = '_blank';
-    whatsappLink.rel = 'noopener';
-    whatsappLink.textContent = 'Abrir WhatsApp para enviar ↗';
-    form.append(whatsappLink);
-    status.textContent = 'Revisá el mensaje en WhatsApp y tocá Enviar para completar tu inscripción.';
+  const contacts = window.SAE_EVENT_CONFIG?.inscriptionsWhatsApp || {};
+  const activity = String(data.get('activity'));
+  const recipients = [];
+  if (activity.includes('FIFA')) recipients.push(['Contacto de FIFA', contacts.fifa]);
+  if (activity.includes('Mario Kart')) recipients.push(['Contacto de Mario Kart', contacts.marioKart]);
+  const validRecipients = recipients.filter(([, number]) => String(number || '').replace(/\D/g, ''));
+  if (validRecipients.length) {
+    validRecipients.forEach(([label, number]) => {
+      const whatsappLink = document.createElement('a');
+      const recipient = String(number).replace(/\D/g, '');
+      whatsappLink.className = 'button button-lime whatsapp-button';
+      whatsappLink.href = `https://wa.me/${recipient}?text=${encodeURIComponent(message)}`;
+      whatsappLink.target = '_blank';
+      whatsappLink.rel = 'noopener';
+      whatsappLink.textContent = `${label}: abrir WhatsApp ↗`;
+      form.append(whatsappLink);
+    });
+    status.textContent = 'Abrí el chat del contacto correspondiente, revisá el mensaje y tocá Enviar.';
   } else {
     const copy = document.createElement('button');
     copy.type = 'button';
