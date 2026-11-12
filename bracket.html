@@ -1,29 +1,60 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Big+Shoulders+Display:wght@800;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css"><title>Llaves | SAE After Class</title></head><body>
-<nav class="nav"><a class="brand" href="/" data-title>SAE After Class</a>
-<ul><li><a class="link " href="/">Inicio</a></li><li><a class="link active" href="/bracket">Llaves</a></li><li><a class="link " href="/join">Inscripción con código</a></li></ul></nav>
-<main class="page wide">
-  <h1>Llaves</h1>
-  <p class="lead" id="status">Cargando…</p>
-  <div id="champ"></div>
-  <div class="scroll"><div class="bracket" id="bracket"></div></div>
-  <div id="poolWrap" class="hidden"><h2 style="font-size:2rem;margin-top:24px">Jugadores inscritos</h2><div class="chips" id="pool"></div></div>
-</main>
-<script src="/shared.js"></script>
-<script>
-async function load(){
-  try{
-    const s=await api('/api/state');
-    renderBracket($('#bracket'),s.bracket);
-    const c=champion(s.bracket);
-    $('#champ').innerHTML=c?'<div class="champion">Campeón: '+esc(c)+'</div>':'';
-    if(s.bracket){ $('#status').textContent='El sorteo ya se realizó. Las personas ganadoras avanzan conforme se registran los resultados.'; $('#poolWrap').classList.add('hidden'); }
-    else{
-      $('#status').textContent=s.players.length+' de 32 jugadores inscritos. Las llaves aparecerán cuando se realice el sorteo.';
-      $('#poolWrap').classList.remove('hidden');
-      $('#pool').innerHTML=s.players.map(p=>'<span class="chip">'+esc(p)+'</span>').join('')||'<span>Todavía no hay jugadores.</span>';
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11120f">
+  <title>Llaves — SAE After Class</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/bracket.css">
+</head>
+<body class="bracket-page">
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="SAE After Class, inicio"><span class="brand-mark">S</span><span>SAE <b>AFTER CLASS</b></span></a>
+    <nav class="nav" aria-label="Navegación principal">
+      <a href="/#torneo">Torneo</a><a href="/#inscripcion">Inscripción</a><a href="/#mercadito">Mercadito</a><a href="/#programa">Programa</a><a class="nav-cta" href="/join">Confirmar cupo <span>↗</span></a>
+    </nav>
+  </header>
+  <main>
+    <section class="bracket-hero">
+      <div class="bracket-kicker"><span></span> SAE AFTER CLASS · TORNEO FIFA</div>
+      <h1>EL CAMINO<br><em>AL TÍTULO</em></h1>
+      <p id="status" aria-live="polite">Cargando las llaves…</p>
+      <div id="champ"></div>
+    </section>
+    <section class="bracket-content">
+      <div class="bracket-content-head"><div><span class="kicker">LLAVES DEL TORNEO</span><h2>Rondas y resultados</h2></div><a class="bracket-home-link" href="/">Volver al evento <span>↗</span></a></div>
+      <div class="bracket-scroll"><div class="bracket" id="bracket"></div></div>
+      <div id="poolWrap" class="player-pool hidden"><div><span class="kicker">ANTES DEL SORTEO</span><h2>Jugadores inscritos</h2></div><div class="chips" id="pool"></div></div>
+      <p class="bracket-refresh"><span></span> Esta página se actualiza automáticamente cuando se registran resultados.</p>
+    </section>
+  </main>
+  <footer class="bracket-footer"><span>SAE · Asociación de Alumnos Emprendedores</span><a href="/">SAE AFTER CLASS <b>↗</b></a></footer>
+  <script src="/shared.js"></script>
+  <script>
+    async function load(){
+      try{
+        const s=await api('/api/state');
+        renderBracket($('#bracket'),s.bracket);
+        const c=champion(s.bracket);
+        $('#champ').innerHTML=c?'<div class="bracket-champion"><span>CAMPEÓN DEL TORNEO</span><b>'+esc(c)+'</b><i>✳</i></div>':'';
+        if(s.bracket){
+          $('#status').textContent='El sorteo ya está hecho. Los ganadores avanzan de ronda cuando el equipo organizador registra cada resultado.';
+          $('#poolWrap').classList.add('hidden');
+        }else{
+          $('#status').textContent=s.players.length+' de '+s.max+' jugadores inscritos. Las llaves aparecerán después del sorteo.';
+          $('#poolWrap').classList.remove('hidden');
+          $('#pool').innerHTML=s.players.map(p=>'<span class="chip">'+esc(p)+'</span>').join('')||'<span class="pool-empty">Aún no hay jugadores inscritos.</span>';
+        }
+      }catch(e){
+        $('#status').textContent='Las llaves estarán disponibles cuando se active el sistema del torneo.';
+        renderBracket($('#bracket'),null);
+      }
     }
-  }catch(e){ $('#status').textContent=e.message; renderBracket($('#bracket'),null); }
-}
-load(); setInterval(load,10000);
-</script>
-</body></html>
+    load(); setInterval(load,10000);
+  </script>
+</body>
+</html>

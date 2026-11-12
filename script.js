@@ -46,27 +46,37 @@ form.addEventListener('submit', async (event) => {
   }
   output.textContent = message;
 
-  let copy = form.querySelector('.copy-button');
-  if (!copy) {
-    copy = document.createElement('button');
+  form.querySelectorAll('.copy-button,.whatsapp-button').forEach((button) => button.remove());
+  const recipient = String(window.SAE_EVENT_CONFIG?.inscriptionsWhatsApp || '').replace(/\D/g, '');
+  if (recipient) {
+    const whatsappLink = document.createElement('a');
+    whatsappLink.className = 'button button-lime whatsapp-button';
+    whatsappLink.href = `https://wa.me/${recipient}?text=${encodeURIComponent(message)}`;
+    whatsappLink.target = '_blank';
+    whatsappLink.rel = 'noopener';
+    whatsappLink.textContent = 'Abrir WhatsApp para enviar ↗';
+    form.append(whatsappLink);
+    status.textContent = 'Revisá el mensaje en WhatsApp y tocá Enviar para completar tu inscripción.';
+  } else {
+    const copy = document.createElement('button');
     copy.type = 'button';
     copy.className = 'copy-button';
+    copy.textContent = 'Copiar mensaje';
     form.append(copy);
+    copy.onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(message);
+        copy.textContent = '¡Mensaje copiado!';
+      } catch {
+        const range = document.createRange();
+        range.selectNodeContents(output);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        copy.textContent = 'Seleccionado: copiá el texto';
+      }
+    };
+    status.textContent = 'El WhatsApp de inscripciones aún está pendiente. Por ahora, copiá el mensaje para enviarlo.';
   }
-  copy.textContent = 'Copiar mensaje';
-  copy.onclick = async () => {
-    try {
-      await navigator.clipboard.writeText(message);
-      copy.textContent = '¡Mensaje copiado!';
-    } catch {
-      const range = document.createRange();
-      range.selectNodeContents(output);
-      const selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(range);
-      copy.textContent = 'Seleccionado: copiá el texto';
-    }
-  };
-  status.textContent = 'Mensaje listo. Copialo y envialo al contacto de inscripciones (pendiente de publicar).';
   status.classList.remove('error');
 });

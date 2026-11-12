@@ -18,6 +18,8 @@ La portada es estática y se puede abrir con cualquier servidor estático. Las r
 
 La portada incluye un formulario que genera un mensaje para coordinar la inscripción y el pago. La confirmación del pago y la entrega de códigos quedan a cargo de la persona organizadora. No se recopilan carnet, carrera ni teléfonos en la base de datos del torneo.
 
+Cuando tengas el número de WhatsApp de inscripciones, colocalo en `site-config.js` en formato internacional y solo con dígitos. El formulario abrirá WhatsApp con el mensaje preparado; cada jugador todavía debe confirmar el envío desde WhatsApp.
+
 ## Personalización
 
 - Los nombres disponibles para el sorteo están en `api/_config.js` (`NAMES`, mínimo 32).

@@ -104,3 +104,27 @@ input[type=text],input[type=password]{width:100%;font:inherit;font-size:1.5rem;f
   .paths a+a{border-left:0}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* SAE After Class theme for registration and tournament management pages */
+:root{--royal:#f2f0e9;--deep:#e7e5dc;--chalk:#f8f7f2;--ink:#12130f;--yellow:#c8fa52;--red:#a84535;--line:#d7d5cc}
+body{background:var(--royal);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.5}
+h1,h2,h3,.display,.btn,.brand,.round h3,.stage .vs{font-family:'Space Grotesk',sans-serif}
+.nav{background:var(--ink);color:#f8f7f2;padding:17px clamp(16px,6vw,86px)}
+.brand{font-size:1.1rem;font-weight:700;letter-spacing:.02em}
+.nav a.link{font-size:.8rem}.nav a.link:hover,.nav a.active{border-bottom-color:var(--yellow)}
+.page{padding-top:clamp(35px,5vw,70px)}
+.page h1{font-size:clamp(2.6rem,6vw,4.6rem);letter-spacing:-.06em}
+.lead{font-size:1rem;color:#6d7065}
+.panel{background:var(--deep);border:1px solid #dedcd3;border-radius:0;color:var(--ink)}
+.panel h2{font-size:1.7rem;letter-spacing:-.04em}
+label{font-size:.85rem}
+input[type=text],input[type=password]{font:500 1rem 'DM Sans',sans-serif;letter-spacing:.02em;border:1px solid #d3d1c8;border-radius:0;background:var(--chalk);color:var(--ink)}
+.btn{background:var(--yellow);color:var(--ink);font-size:.9rem;padding:12px 19px;border-radius:0}
+.btn:hover{background:#b9ea43}.btn.ghost{background:transparent;color:var(--ink);border:1px solid #999b8f}.btn.ghost:hover{background:#12130f;color:#fff}.btn.danger{background:var(--red);color:white}
+.msg{background:#12130f;color:#fff;border-radius:0;font-size:.85rem}.msg.err{background:var(--red)}.msg.ok{background:var(--yellow);color:var(--ink)}
+.chip{background:#f8f7f2;color:var(--ink);border:1px solid #dedcd3;border-radius:0;font-size:.8rem}
+.champion{background:var(--yellow);color:var(--ink);border-radius:0;font:700 1.4rem 'Space Grotesk',sans-serif}
+.round h3{color:#66852d}.match{border:1px solid #c9c7bd;border-radius:0}.slot{font-size:.8rem}.slot+.slot{border-top:1px solid #d3d1c8}.slot.win{background:var(--yellow)}.slot.tbd{color:#888a80}.cell::after,.cell.top::before,.cell.bot::before,.match.linked::before{border-color:#b8baae}
+.stage{background:#12130f}.stage .match-no{color:var(--yellow)}
+.round-progress-panel{margin-top:18px;padding:24px;background:#e7e5dc;border:1px solid #dedcd3}.round-progress-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:18px}.progress-kicker{display:block;font:700 9px 'Space Grotesk',sans-serif;letter-spacing:.15em;color:#7f8276;margin-bottom:7px}.round-progress-heading h2{margin:0;font:600 clamp(20px,3vw,27px)/1.1 'Space Grotesk',sans-serif;letter-spacing:-.04em}.click-hint{font-size:11px;color:#77796f}.round-progress{display:grid;grid-template-columns:repeat(5,minmax(112px,1fr));gap:8px}.round-progress-step{background:#f8f7f2;border:1px solid #d8d6cd;padding:12px;display:grid;gap:5px;min-height:83px}.round-progress-step>span{font:700 8px 'Space Grotesk',sans-serif;letter-spacing:.1em;color:#8b8d82}.round-progress-step b{font:600 12px 'Space Grotesk',sans-serif}.round-progress-step small{font-size:9px;color:#818378}.round-progress-step.complete{border-color:#c8fa52;background:#f4f8e9}.round-progress-step.current{background:#12130f;color:#fff;border-color:#12130f}.round-progress-step.current>span,.round-progress-step.current small{color:#c8fa52}.progress-empty{font-size:12px;color:#77796f;margin:0}
+@media(max-width:700px){.nav{padding:14px 5%;flex-direction:row;align-items:center}.nav ul{gap:0}.nav a.link{padding:8px 7px;font-size:.7rem}.round-progress-panel{padding:17px}.round-progress-heading{display:block}.click-hint{display:block;margin-top:8px}.round-progress{grid-template-columns:repeat(2,minmax(0,1fr))}.round-progress-step:last-child{grid-column:1/-1}}

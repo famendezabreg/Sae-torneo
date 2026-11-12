@@ -1,4 +1,4 @@
-<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Big+Shoulders+Display:wght@800;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css"><title>Administración | SAE After Class</title><meta name="robots" content="noindex"></head><body>
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css"><title>Administración | SAE After Class</title><meta name="robots" content="noindex"></head><body>
 <nav class="nav"><a class="brand" href="/">SAE After Class</a><span>Administración</span></nav>
 <main class="page wide">
   <section class="panel" id="login">
@@ -11,6 +11,10 @@
   <div id="app" class="hidden">
     <h1 style="font-size:4rem">Panel del torneo</h1>
     <div id="msg"></div>
+    <section class="round-progress-panel" aria-live="polite">
+      <div class="round-progress-heading"><div><span class="progress-kicker">AVANCE DEL TORNEO</span><h2>¿Quién pasa a la siguiente?</h2></div><span class="click-hint">Hacé clic en quien ganó</span></div>
+      <div class="round-progress" id="round-progress"></div>
+    </section>
     <h2 style="font-size:2.2rem;margin-top:24px">Inscritos: <span id="count">0</span> de 32</h2>
     <div class="chips" id="pool"></div>
 
@@ -18,7 +22,7 @@
       <button class="btn" id="draw">Realizar el sorteo</button>
       <label style="margin:0;display:flex;gap:8px;align-items:center"><input type="checkbox" id="byes"> Permitir pases directos (sorteo con 17 a 31 jugadores)</label>
     </div>
-    <p style="margin:12px 0 28px">El sorteo se guarda al confirmar y se muestra en pantalla. Proyectá esta página durante el evento. Después, hacé clic en el nombre de quien gane cada partido (volvé a hacer clic para deshacer).</p>
+    <p style="margin:12px 0 28px">El sorteo mezcla automáticamente a quienes tienen el pago confirmado. Cuando registrás un resultado haciendo clic en el ganador, esa persona aparece en el partido de la ronda siguiente. Volvé a hacer clic para deshacerlo.</p>
 
     <div class="scroll admin-on"><div class="bracket" id="bracket"></div></div>
 
@@ -46,11 +50,25 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 
 function paint(){
   $('#count').textContent=state.players.length;
+  paintRoundProgress();
   $('#pool').innerHTML=state.players.map(p=>'<span class="chip">'+esc(p)+(state.bracket?'':'<button title="Liberar a este jugador" data-p="'+esc(p)+'">×</button>')+'</span>').join('')||'<span>Todavía no hay jugadores.</span>';
   $('#pool').querySelectorAll('button').forEach(b=>b.onclick=()=>{ if(confirm('¿Liberar a '+b.dataset.p+'? Su nombre y código volverán a estar disponibles.')) act({action:'release',name:b.dataset.p}); });
   renderBracket($('#bracket'),state.bracket,(r,m,n)=>act({action:'winner',round:r,match:m,name:n}));
   $('#draw').disabled=!!state.bracket;
   paintCodes();
+}
+
+function paintRoundProgress(){
+  const labels=['32avos','Octavos','Cuartos','Semifinales','Final'];
+  if(!state.bracket){ $('#round-progress').innerHTML='<p class="progress-empty">Realizá el sorteo para ver aquí cómo avanzan las rondas.</p>'; return; }
+  const rounds=state.bracket.rounds;
+  let active=rounds.findIndex(round=>round.some(match=>!match.w&&(match.a||match.b)));
+  if(active<0) active=rounds.length;
+  $('#round-progress').innerHTML=rounds.map((round,i)=>{
+    const done=round.filter(match=>match.w).length;
+    const status=i<active?'complete':i===active?'current':'';
+    return '<div class="round-progress-step '+status+'"><span>0'+(i+1)+'</span><b>'+labels[i]+'</b><small>'+done+' / '+round.length+' partidos</small></div>';
+  }).join('');
 }
 
 function paintCodes(){
@@ -67,7 +85,17 @@ $('#dlCodes').onclick=()=>{ const a=document.createElement('a'); a.href=URL.crea
 
 async function act(body){
   if(busy) return; busy=true; msg('');
-  try{ state=await api('/api/admin',{password:pw,...body}); paint(); return state; }
+  try{
+    const previous=body.action==='winner'?state.bracket.rounds[body.round][body.match].w:null;
+    state=await api('/api/admin',{password:pw,...body}); paint();
+    if(body.action==='winner'){
+      const labels=['32avos','Octavos','Cuartos','Semifinales','Final'];
+      if(previous===body.name) msg(body.name+' ya no está marcado como ganador.','ok');
+      else if(body.round===4) msg('¡'+body.name+' es campeón del torneo!','ok');
+      else msg(body.name+' avanza a '+labels[body.round+1]+'.','ok');
+    }
+    return state;
+  }
   catch(e){ msg(e.message,'err'); }
   finally{ busy=false; }
 }
