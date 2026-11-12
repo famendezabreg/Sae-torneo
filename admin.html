@@ -16,29 +16,23 @@
       <div class="round-progress" id="round-progress"></div>
     </section>
     <h2 style="font-size:2.2rem;margin-top:24px">Inscritos: <span id="count">0</span> de 32</h2>
+    <form class="participant-form" id="player-form">
+      <div><label for="player-name">Agregar participante confirmado</label><input type="text" id="player-name" maxlength="80" placeholder="Nombre que aparecerá en las llaves" required><small>Agregalo solo después de confirmar el pago.</small></div>
+      <label class="paid-confirmation"><input type="checkbox" id="paid-confirmed" required> Confirmo que esta persona ya pagó</label>
+      <button class="btn" id="add-player" type="submit">Agregar a la lista</button>
+    </form>
     <div class="chips" id="pool"></div>
 
     <div class="row" style="align-items:center">
       <button class="btn" id="draw">Realizar el sorteo</button>
-      <label style="margin:0;display:flex;gap:8px;align-items:center"><input type="checkbox" id="byes"> Permitir pases directos (sorteo con 17 a 31 jugadores)</label>
     </div>
     <p style="margin:12px 0 28px">El sorteo mezcla automáticamente a quienes tienen el pago confirmado. Cuando registrás un resultado haciendo clic en el ganador, esa persona aparece en el partido de la ronda siguiente. Volvé a hacer clic para deshacerlo.</p>
 
     <div class="scroll admin-on"><div class="bracket" id="bracket"></div></div>
 
-    <h2 style="font-size:2.2rem;margin-top:40px">Códigos</h2>
-    <p id="codeNote" style="margin:0 0 12px"></p>
-    <div class="chips" id="codes"></div>
-    <div class="row" id="codeTools">
-      <button class="btn ghost small" id="copyCodes">Copiar códigos disponibles</button>
-      <button class="btn ghost small" id="dlCodes">Descargar todos los códigos</button>
-    </div>
-
     <div class="row" style="margin-top:40px">
       <button class="btn ghost small" id="resetDraw">Rehacer el sorteo</button>
-      <button class="btn danger small" id="resetAll">Reiniciar todo (códigos nuevos)</button>
     </div>
-    <p style="margin:12px 0 0;max-width:40em">Reiniciar todo borra el sorteo, todos los jugadores y códigos usados, y genera 32 nuevos. Los anteriores dejan de funcionar.</p>
   </div>
 </main>
 <div class="stage hidden" id="stage"><button class="btn ghost small skip" id="skip">Saltar</button><div><div class="match-no" id="mno"></div><div class="vs"><span id="pa"></span><i>vs</i><span id="pb"></span></div></div></div>
@@ -51,15 +45,17 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function paint(){
   $('#count').textContent=state.players.length;
   paintRoundProgress();
+  $('#add-player').disabled=!!state.bracket||state.players.length>=32;
+  $('#player-name').disabled=!!state.bracket||state.players.length>=32;
+  $('#paid-confirmed').disabled=!!state.bracket||state.players.length>=32;
   $('#pool').innerHTML=state.players.map(p=>'<span class="chip">'+esc(p)+(state.bracket?'':'<button title="Liberar a este jugador" data-p="'+esc(p)+'">×</button>')+'</span>').join('')||'<span>Todavía no hay jugadores.</span>';
-  $('#pool').querySelectorAll('button').forEach(b=>b.onclick=()=>{ if(confirm('¿Liberar a '+b.dataset.p+'? Su nombre y código volverán a estar disponibles.')) act({action:'release',name:b.dataset.p}); });
+  $('#pool').querySelectorAll('button').forEach(b=>b.onclick=()=>{ if(confirm('¿Quitar a '+b.dataset.p+' de la lista?')) act({action:'release',name:b.dataset.p}); });
   renderBracket($('#bracket'),state.bracket,(r,m,n)=>act({action:'winner',round:r,match:m,name:n}));
   $('#draw').disabled=!!state.bracket;
-  paintCodes();
 }
 
 function paintRoundProgress(){
-  const labels=['32avos','Octavos','Cuartos','Semifinales','Final'];
+  const labels=['Ronda de 32','Octavos','Cuartos','Semifinales','Final'];
   if(!state.bracket){ $('#round-progress').innerHTML='<p class="progress-empty">Realizá el sorteo para ver aquí cómo avanzan las rondas.</p>'; return; }
   const rounds=state.bracket.rounds;
   let active=rounds.findIndex(round=>round.some(match=>!match.w&&(match.a||match.b)));
@@ -71,25 +67,14 @@ function paintRoundProgress(){
   }).join('');
 }
 
-function paintCodes(){
-  const c=state.codes;
-  $('#codeTools').classList.toggle('hidden',!c);
-  if(!c){ $('#codes').innerHTML=''; $('#codeNote').textContent='Están configurados los códigos iniciales. Reiniciá todo para generar códigos nuevos y copiarlos aquí.'; return; }
-  const free=c.filter(x=>!x.used).length;
-  $('#codeNote').textContent=free+' de '+c.length+' códigos disponibles. Los ya usados aparecen tachados.';
-  $('#codes').innerHTML=c.map(x=>'<span class="chip" style="'+(x.used?'text-decoration:line-through;opacity:.5':'')+'">'+esc(x.code)+'</span>').join('');
-}
-const codeList=only=>state.codes.filter(x=>!only||!x.used).map(x=>x.code).join('\n');
-$('#copyCodes').onclick=async()=>{ try{ await navigator.clipboard.writeText(codeList(true)); msg('Copiados '+state.codes.filter(x=>!x.used).length+' códigos disponibles.','ok'); }catch(e){ msg('No se pudieron copiar. Usá Descargar.','err'); } };
-$('#dlCodes').onclick=()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([codeList(false)+'\n'],{type:'text/plain'})); a.download='codes.txt'; a.click(); };
-
 async function act(body){
   if(busy) return; busy=true; msg('');
   try{
     const previous=body.action==='winner'?state.bracket.rounds[body.round][body.match].w:null;
     state=await api('/api/admin',{password:pw,...body}); paint();
+    if(body.action==='add-player') msg(body.name.trim()+' quedó agregado a la lista de participantes confirmados.','ok');
     if(body.action==='winner'){
-      const labels=['32avos','Octavos','Cuartos','Semifinales','Final'];
+      const labels=['Ronda de 32','Octavos','Cuartos','Semifinales','Final'];
       if(previous===body.name) msg(body.name+' ya no está marcado como ganador.','ok');
       else if(body.round===4) msg('¡'+body.name+' es campeón del torneo!','ok');
       else msg(body.name+' avanza a '+labels[body.round+1]+'.','ok');
@@ -112,9 +97,16 @@ $('#go').onclick=login;
 $('#pw').addEventListener('keydown',e=>{ if(e.key==='Enter') login(); });
 if(pw) login();
 
+$('#player-form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const input=$('#player-name');
+  const added=await act({action:'add-player',name:input.value,paidConfirmed:$('#paid-confirmed').checked});
+  if(added){ input.value=''; $('#paid-confirmed').checked=false; }
+});
+
 $('#draw').onclick=async()=>{
   const old=state.bracket;
-  const s=await act({action:'draw',allowByes:$('#byes').checked});
+  const s=await act({action:'draw'});
   if(s&&s.bracket&&!old) await reveal(s.bracket.rounds[0],s.players);
 };
 
@@ -138,9 +130,5 @@ async function reveal(matches,pool){
 }
 
 $('#resetDraw').onclick=()=>{ if(confirm('¿Borrar el sorteo actual y las llaves? Los jugadores seguirán inscritos.')) act({action:'reset-draw'}); };
-$('#resetAll').onclick=async()=>{
-  const t=prompt('Esto borra el sorteo, todos los jugadores y códigos, y genera 32 nuevos. Escribí REINICIAR para confirmar.');
-  if(t&&t.trim().toUpperCase()==='REINICIAR'){ await act({action:'reset-all'}); msg('Listo. Los nuevos códigos aparecen abajo.','ok'); }
-};
 </script>
 </body></html>

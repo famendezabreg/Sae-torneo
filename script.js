@@ -5,7 +5,7 @@ fetch('/api/state')
   .then((response) => response.ok ? response.json() : Promise.reject())
   .then((state) => {
     const maximum = state.max || 32;
-    const remaining = Math.max(0, maximum - state.players.length);
+    const remaining = Math.max(0, maximum - state.playerCount);
     document.querySelector('#seats-count').textContent = `${remaining} / ${maximum}`;
     document.querySelector('#seat-progress').style.width = `${((maximum - remaining) / maximum) * 100}%`;
   })

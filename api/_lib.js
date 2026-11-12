@@ -16,25 +16,6 @@ async function redis(...cmd) {
   return j.result;
 }
 
-const sha = (s) => crypto.createHash('sha256').update(s).digest('hex');
-
-// Accepts "fifa-2kac-bh3k", "FIFA2KACBH3K" or just "2KACBH3K" and returns "FIFA-2KAC-BH3K"
-function canon(input) {
-  let c = String(input || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-  if (c.length === 8) c = 'FIFA' + c;
-  if (c.length !== 12) return '';
-  return `FIFA-${c.slice(4, 8)}-${c.slice(8, 12)}`;
-}
-
-// 32 fresh unique codes like FIFA-7K3Q-9XPD (no look-alike characters)
-function genCodes(n = 32) {
-  const alpha = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  const pick = () => Array.from({ length: 4 }, () => alpha[crypto.randomInt(alpha.length)]).join('');
-  const set = new Set();
-  while (set.size < n) set.add(`FIFA-${pick()}-${pick()}`);
-  return [...set].sort();
-}
-
 function shuffle(a) {
   for (let i = a.length - 1; i > 0; i--) {
     const j = crypto.randomInt(i + 1);
@@ -62,23 +43,15 @@ function clear(rounds, r, m) {
   }
 }
 
-// Random draw: 32 slots, byes (if fewer than 32 players) are spread across different matches
 function buildBracket(players) {
   const p = shuffle([...players]);
-  const byes = 32 - p.length;
-  const matches = [];
-  let idx = 0;
-  for (let i = 0; i < 16; i++) {
-    if (i < byes) matches.push({ a: p[idx++], b: null, w: null });
-    else matches.push({ a: p[idx++], b: p[idx++], w: null });
-  }
+  const matches = Array.from({ length: 16 }, (_, i) => ({ a: p[i * 2], b: p[i * 2 + 1], w: null }));
   shuffle(matches);
   const rounds = [matches];
   for (let r = 1; r < 5; r++) {
     rounds.push(Array.from({ length: 32 >> (r + 1) }, () => ({ a: null, b: null, w: null })));
   }
-  matches.forEach((m, i) => { if (!m.b) advance(rounds, 0, i, m.a); });
   return { rounds, drawnAt: Date.now() };
 }
 
-module.exports = { redis, sha, canon, genCodes, shuffle, advance, clear, buildBracket };
+module.exports = { redis, shuffle, advance, clear, buildBracket };

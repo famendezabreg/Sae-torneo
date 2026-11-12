@@ -1,5 +1,5 @@
 const TOURNAMENT = 'SAE After Class';
-const ROUND_NAMES = ['32avos', 'Octavos', 'Cuartos', 'Semifinales', 'Final'];
+const ROUND_NAMES = ['Ronda de 32', 'Octavos', 'Cuartos', 'Semifinales', 'Final'];
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
