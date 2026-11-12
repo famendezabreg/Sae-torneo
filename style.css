@@ -105,6 +105,45 @@ input[type=text],input[type=password]{width:100%;font:inherit;font-size:1.5rem;f
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 
+/* Branded sign-in for the tournament dashboard. */
+.admin-nav{min-height:76px;padding:14px clamp(18px,6vw,86px);background:#12130f;color:#f8f7f2}
+.admin-nav .brand{display:flex;align-items:center;gap:11px;font:700 15px 'Space Grotesk',sans-serif;letter-spacing:.02em}
+.admin-nav .brand-mark{width:31px;height:31px;display:grid;place-items:center;background:#c8fa52;color:#12130f;font:700 18px 'Space Grotesk',sans-serif;transform:rotate(-6deg)}
+.admin-nav .brand b{font-size:10px;letter-spacing:.18em;color:#c8fa52;margin-left:4px}
+.admin-nav-back{color:#b6b8af;font-size:11px}.admin-nav-back span{color:#c8fa52;padding-left:7px}
+.admin-login-shell{min-height:calc(100vh - 76px);display:grid;place-items:center;padding:48px 22px 72px;overflow:hidden;background:radial-gradient(ellipse at 12% 78%,#dce8bb 0,transparent 32%),#f2f0e9}
+.admin-login-card{width:min(100%,1000px);min-height:535px;display:grid;grid-template-columns:1fr 1fr;background:#f8f7f2;border:1px solid #dedcd3;box-shadow:0 24px 75px #12130f12}
+.admin-login-art{position:relative;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;padding:34px 38px;background:#12130f;color:#f8f7f2}
+.admin-login-art:before{content:'';position:absolute;inset:0;opacity:.12;background-image:linear-gradient(#a9ad9a 1px,transparent 1px),linear-gradient(90deg,#a9ad9a 1px,transparent 1px);background-size:38px 38px;mask-image:linear-gradient(135deg,#000,transparent 80%)}
+.admin-login-kicker,.admin-login-art-copy,.admin-login-edition{position:relative;z-index:1}
+.admin-login-kicker{display:flex;align-items:center;gap:9px;color:#c5c8bb;font:700 9px 'Space Grotesk',sans-serif;letter-spacing:.14em}
+.admin-login-kicker i{width:7px;height:7px;border-radius:50%;background:#c8fa52;box-shadow:0 0 12px #c8fa52}
+.admin-login-art-copy>span{font:700 9px 'Space Grotesk',sans-serif;letter-spacing:.18em;color:#9ba08c}
+.admin-login-art h1{margin:18px 0;font:700 clamp(48px,6vw,72px)/.91 'Space Grotesk',sans-serif;letter-spacing:-.075em}
+.admin-login-art h1 em{color:#c8fa52;font-style:normal}.admin-login-art h1 b{color:#c8fa52}
+.admin-login-art-copy p{max-width:330px;color:#b2b4aa;font-size:12px;line-height:1.7;margin:0}
+.admin-login-star{position:absolute;right:-44px;bottom:55px;color:#c8fa52;font-size:235px;line-height:1;opacity:.09;transform:rotate(18deg);pointer-events:none}
+.admin-login-edition{color:#85877d;font:700 8px 'Space Grotesk',sans-serif;letter-spacing:.18em}
+.admin-login-content{display:flex;flex-direction:column;justify-content:center;padding:clamp(32px,5vw,64px)}
+.admin-login-lock{width:43px;height:43px;display:grid;place-items:center;margin-bottom:25px;background:#eaf5ce;color:#67852d}
+.admin-login-lock svg{width:21px;height:21px;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.admin-login-label{color:#788b4d;font:700 9px 'Space Grotesk',sans-serif;letter-spacing:.16em}
+.admin-login-content h2{margin:10px 0;font:600 clamp(27px,3.5vw,36px)/1.1 'Space Grotesk',sans-serif;letter-spacing:-.055em;color:#12130f}
+.admin-login-intro{max-width:340px;margin:0 0 28px;color:#77796f;font-size:12px;line-height:1.65}
+.admin-login-content label{margin:0 0 8px;color:#33352c;font-size:11px;font-weight:700}
+.admin-login-content input#pw{width:100%;height:48px;padding:0 13px;border:1px solid #d3d1c8;border-radius:0;background:#fff;color:#12130f;font:500 13px 'DM Sans',sans-serif;letter-spacing:.02em;outline:none;transition:border-color .18s,box-shadow .18s}
+.admin-login-content input#pw::placeholder{color:#a1a397;font-weight:400}
+.admin-login-content input#pw:focus{border-color:#91b63a;box-shadow:0 0 0 3px #c8fa5244}
+.admin-login-content .row{margin-top:13px}
+.admin-login-submit{width:100%;min-height:49px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:#12130f;color:#fff;font:700 12px 'DM Sans',sans-serif;text-align:left}
+.admin-login-submit span{color:#c8fa52;font-size:18px;transition:transform .18s}
+.admin-login-submit:hover{background:#25271f;color:#fff}.admin-login-submit:hover span{transform:translate(2px,-2px)}
+.admin-login-content #m0:empty{display:none}.admin-login-content #m0 .msg{margin-top:13px;font-size:11px}
+.admin-login-note{display:flex;align-items:center;gap:8px;margin:25px 0 0;color:#85877d;font-size:10px}
+.admin-login-note span{width:6px;height:6px;border-radius:50%;background:#a6c956}
+@media(max-width:720px){.admin-nav{min-height:68px}.admin-login-shell{min-height:calc(100vh - 68px);padding:28px 16px 46px}.admin-login-card{max-width:470px;min-height:0;grid-template-columns:1fr}.admin-login-art{min-height:215px;padding:23px 25px}.admin-login-art h1{font-size:48px;margin:12px 0}.admin-login-art-copy p{max-width:280px;font-size:11px}.admin-login-star{right:-36px;bottom:-72px;font-size:170px}.admin-login-edition{margin-top:19px;font-size:7px}.admin-login-content{padding:29px 25px 26px}.admin-login-lock{margin-bottom:18px}.admin-login-intro{margin-bottom:22px}}
+@media(max-width:380px){.admin-nav .brand{font-size:13px}.admin-login-art{min-height:195px}.admin-login-art h1{font-size:43px}.admin-login-content{padding:25px 20px}.admin-login-note{font-size:9px}}
+
 /* SAE After Class theme for registration and tournament management pages */
 :root{--royal:#f2f0e9;--deep:#e7e5dc;--chalk:#f8f7f2;--ink:#12130f;--yellow:#c8fa52;--red:#a84535;--line:#d7d5cc}
 body{background:var(--royal);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:15px;line-height:1.5}

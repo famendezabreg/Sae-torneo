@@ -1,11 +1,24 @@
 <!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/style.css"><title>Administración | SAE After Class</title><meta name="robots" content="noindex"></head><body>
-<nav class="nav"><a class="brand" href="/">SAE After Class</a><span>Administración</span></nav>
-<main class="page wide">
-  <section class="panel" id="login">
-    <h2>Contraseña de administración</h2>
-    <input type="password" id="pw" autocomplete="current-password">
-    <div class="row"><button class="btn" id="go">Ingresar</button></div>
-    <div id="m0"></div>
+<nav class="nav admin-nav"><a class="brand" href="/"><span class="brand-mark">S</span><span>SAE <b>AFTER CLASS</b></span></a><a class="admin-nav-back" href="/">Volver al sitio <span>↗</span></a></nav>
+<main class="page wide admin-login-shell">
+  <section class="admin-login-card" id="login" aria-labelledby="login-title">
+    <div class="admin-login-art">
+      <span class="admin-login-kicker"><i></i> ACCESO DEL EQUIPO ORGANIZADOR</span>
+      <div class="admin-login-art-copy"><span>SAE · TORNEO FIFA</span><h1>El camino<br>al <em>título</em><b>.</b></h1><p>Inscritos, enfrentamientos y cada resultado del torneo en un solo lugar.</p></div>
+      <span class="admin-login-star" aria-hidden="true">✳</span>
+      <span class="admin-login-edition">AFTER CLASS · GAME ON</span>
+    </div>
+    <div class="admin-login-content">
+      <div class="admin-login-lock" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3M12 14v3"/></svg></div>
+      <span class="admin-login-label">PANEL DE ADMINISTRACIÓN</span>
+      <h2 id="login-title">Qué bueno verte.</h2>
+      <p class="admin-login-intro">Ingresá tu contraseña para continuar con la organización del torneo.</p>
+      <label for="pw">Contraseña</label>
+      <input type="password" id="pw" autocomplete="current-password" placeholder="Escribí tu contraseña">
+      <div class="row"><button class="btn admin-login-submit" id="go">Ingresar al panel <span>↗</span></button></div>
+      <div id="m0" aria-live="polite"></div>
+      <p class="admin-login-note"><span></span> Acceso reservado para el equipo organizador</p>
+    </div>
   </section>
 
   <div id="app" class="hidden">
