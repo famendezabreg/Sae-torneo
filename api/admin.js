@@ -1,5 +1,5 @@
 const crypto = require('crypto');
-const { redis, buildBracket, advance, clear } = require('./_lib');
+const { redis, sha, genCodes, buildBracket, advance, clear } = require('./_lib');
 
 const same = (a, b) => {
   const x = crypto.createHash('sha256').update(String(a)).digest();
@@ -50,16 +50,30 @@ module.exports = async (req, res) => {
       await redis('SET', 't:bracket', JSON.stringify(bracket));
     } else if (action === 'release') {
       if (bracket) return bad(res, 'Rehacé el sorteo antes de quitar participantes.');
+      const claims = await redis('HGETALL', 't:claims');
+      for (let i = 0; i < claims.length; i += 2) if (claims[i + 1] === name) await redis('HDEL', 't:claims', claims[i]);
       await redis('HDEL', 't:players', name);
     } else if (action === 'reset-draw') {
       await redis('DEL', 't:bracket');
+      bracket = null;
+    } else if (action === 'reset-all') {
+      await redis('DEL', 't:bracket', 't:players', 't:claims', 't:codes');
+      const fresh = genCodes(32);
+      await redis('HSET', 't:codes', ...fresh.flatMap((c) => [sha(c), c]));
       bracket = null;
     } else if (action !== 'list') {
       return bad(res, 'Acción desconocida.');
     }
 
     const now = await redis('HKEYS', 't:players');
-    res.status(200).json({ ok: true, players: now.sort(), bracket });
+    const [stored, used] = await Promise.all([redis('HGETALL', 't:codes'), redis('HKEYS', 't:claims')]);
+    let codes = null;
+    if (stored && stored.length) {
+      codes = [];
+      for (let i = 0; i < stored.length; i += 2) codes.push({ code: stored[i + 1], used: used.includes(stored[i]) });
+      codes.sort((a, b) => a.code.localeCompare(b.code));
+    }
+    res.status(200).json({ ok: true, players: now.sort(), bracket, codes, usedCount: used.length });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }

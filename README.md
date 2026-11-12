@@ -4,7 +4,7 @@ Sitio del evento y herramientas para administrar el torneo de FIFA: formulario d
 
 ## Desarrollo local
 
-La portada es estática y se puede abrir con cualquier servidor estático. Las rutas `/bracket` y `/admin`, además de las funciones de `/api`, requieren el despliegue en Vercel.
+La portada es estática y se puede abrir con cualquier servidor estático. Las rutas `/bracket`, `/admin` y la inscripción con código heredada en `/join`, además de las funciones de `/api`, requieren el despliegue en Vercel.
 
 ## Preparar el registro y las llaves
 
@@ -15,6 +15,8 @@ La portada es estática y se puede abrir con cualquier servidor estático. Las r
 5. Abrí `/admin` e ingresá la contraseña. Agregá manualmente a cada participante después de verificar su pago; el panel no guarda datos de pago.
 6. Al llegar a 32 participantes confirmados, elegí **Realizar el sorteo**. La app mezcla los nombres y genera los 16 enfrentamientos. `/bracket` muestra las llaves públicamente.
 7. Después de cada partido, seleccioná el ganador en el panel. El ganador avanza a la siguiente ronda. Si elegiste a la persona incorrecta, volvé a seleccionarla para deshacerlo.
+
+El flujo principal es la carga manual desde `/admin`. La ruta `/join` se conserva para códigos de inscripción que ya se hubieran compartido; también respeta el límite de 32 cupos.
 
 La portada incluye un formulario que genera un mensaje para coordinar la inscripción y el pago. El equipo organizador confirma el pago y agrega el nombre del jugador al panel. El sorteo requiere los 32 cupos completos. No se recopilan carnet, carrera ni teléfonos en la base de datos del torneo.
 

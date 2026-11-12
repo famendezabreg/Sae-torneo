@@ -16,6 +16,23 @@ async function redis(...cmd) {
   return j.result;
 }
 
+const sha = (s) => crypto.createHash('sha256').update(s).digest('hex');
+
+function canon(input) {
+  let c = String(input || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (c.length === 8) c = 'FIFA' + c;
+  if (c.length !== 12) return '';
+  return `FIFA-${c.slice(4, 8)}-${c.slice(8, 12)}`;
+}
+
+function genCodes(n = 32) {
+  const alpha = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const pick = () => Array.from({ length: 4 }, () => alpha[crypto.randomInt(alpha.length)]).join('');
+  const set = new Set();
+  while (set.size < n) set.add(`FIFA-${pick()}-${pick()}`);
+  return [...set].sort();
+}
+
 function shuffle(a) {
   for (let i = a.length - 1; i > 0; i--) {
     const j = crypto.randomInt(i + 1);
@@ -54,4 +71,4 @@ function buildBracket(players) {
   return { rounds, drawnAt: Date.now() };
 }
 
-module.exports = { redis, shuffle, advance, clear, buildBracket };
+module.exports = { redis, sha, canon, genCodes, shuffle, advance, clear, buildBracket };
