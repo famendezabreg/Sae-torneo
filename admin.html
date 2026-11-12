@@ -22,7 +22,7 @@
   </section>
 
   <div id="app" class="hidden">
-    <h1 style="font-size:4rem">Panel del torneo</h1>
+    <div class="admin-dashboard-head"><h1>Panel del torneo</h1><button class="btn ghost small admin-logout" id="logout" type="button">Cerrar sesión <span aria-hidden="true">↗</span></button></div>
     <div id="msg"></div>
     <section class="round-progress-panel" aria-live="polite">
       <div class="round-progress-heading"><div><span class="progress-kicker">AVANCE DEL TORNEO</span><h2>¿Quién pasa a la siguiente?</h2></div><span class="click-hint">Hacé clic en quien ganó</span></div>
@@ -51,9 +51,18 @@
 <div class="stage hidden" id="stage"><button class="btn ghost small skip" id="skip">Saltar</button><div><div class="match-no" id="mno"></div><div class="vs"><span id="pa"></span><i>vs</i><span id="pb"></span></div></div></div>
 <script src="/shared.js"></script>
 <script>
-let pw=sessionStorage.getItem('pw')||'', state=null, skipping=false, busy=false;
+let pw='', state=null, skipping=false, busy=false;
+try{sessionStorage.removeItem('pw')}catch{}
 const msg=(t,cls)=>$('#msg').innerHTML=t?'<div class="msg '+cls+'">'+esc(t)+'</div>':'';
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+function logout(){
+  pw=''; state=null; skipping=true; busy=false;
+  try{sessionStorage.removeItem('pw')}catch{}
+  $('#pw').value=''; $('#m0').innerHTML=''; $('#msg').innerHTML='';
+  $('#stage').classList.add('hidden');
+  $('#app').classList.add('hidden'); $('#login').classList.remove('hidden');
+}
 
 function paint(){
   $('#count').textContent=state.players.length;
@@ -102,13 +111,14 @@ async function login(){
   pw=$('#pw').value||pw;
   try{
     state=await api('/api/admin',{password:pw,action:'list'});
-    sessionStorage.setItem('pw',pw);
     $('#login').classList.add('hidden'); $('#app').classList.remove('hidden'); paint();
-  }catch(e){ $('#m0').innerHTML='<div class="msg err">'+esc(e.message)+'</div>'; }
+  }catch(e){ pw=''; $('#pw').value=''; $('#m0').innerHTML='<div class="msg err">'+esc(e.message)+'</div>'; }
 }
 $('#go').onclick=login;
+$('#logout').onclick=logout;
+window.addEventListener('pagehide',logout);
+window.addEventListener('pageshow',e=>{if(e.persisted) logout();});
 $('#pw').addEventListener('keydown',e=>{ if(e.key==='Enter') login(); });
-if(pw) login();
 
 $('#player-form').addEventListener('submit',async e=>{
   e.preventDefault();

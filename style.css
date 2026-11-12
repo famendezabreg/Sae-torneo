@@ -141,8 +141,15 @@ input[type=text],input[type=password]{width:100%;font:inherit;font-size:1.5rem;f
 .admin-login-content #m0:empty{display:none}.admin-login-content #m0 .msg{margin-top:13px;font-size:11px}
 .admin-login-note{display:flex;align-items:center;gap:8px;margin:25px 0 0;color:#85877d;font-size:10px}
 .admin-login-note span{width:6px;height:6px;border-radius:50%;background:#a6c956}
+.admin-dashboard-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:16px}
+.admin-dashboard-head h1{margin:0;line-height:.95}
+.admin-logout{display:flex;align-items:center;gap:12px;flex:none;font:700 11px 'DM Sans',sans-serif!important;padding:10px 14px!important}
+.admin-logout span{color:#789b37;font-size:15px}
 @media(max-width:720px){.admin-nav{min-height:68px}.admin-login-shell{min-height:calc(100vh - 68px);padding:28px 16px 46px}.admin-login-card{max-width:470px;min-height:0;grid-template-columns:1fr}.admin-login-art{min-height:215px;padding:23px 25px}.admin-login-art h1{font-size:48px;margin:12px 0}.admin-login-art-copy p{max-width:280px;font-size:11px}.admin-login-star{right:-36px;bottom:-72px;font-size:170px}.admin-login-edition{margin-top:19px;font-size:7px}.admin-login-content{padding:29px 25px 26px}.admin-login-lock{margin-bottom:18px}.admin-login-intro{margin-bottom:22px}}
 @media(max-width:380px){.admin-nav .brand{font-size:13px}.admin-login-art{min-height:195px}.admin-login-art h1{font-size:43px}.admin-login-content{padding:25px 20px}.admin-login-note{font-size:9px}}
+@media(max-width:560px){.admin-dashboard-head{align-items:flex-start;flex-direction:column;gap:13px}.admin-logout{align-self:flex-end}}
+
+.admin-dashboard-head h1{margin:0}
 
 /* SAE After Class theme for registration and tournament management pages */
 :root{--royal:#f2f0e9;--deep:#e7e5dc;--chalk:#f8f7f2;--ink:#12130f;--yellow:#c8fa52;--red:#a84535;--line:#d7d5cc}
